@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Cursor Smoke Efekt</title>
+    <style>
+        body {
+            background-color: black;
+            cursor: none;
+            overflow: hidden;
+            margin: 0;
+        }
+        .smoke-trail {
+            position: fixed;
+            pointer-events: none;
+        }
+        .smoke-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
+        }
+    </style>
+</head>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const smokeTrails = [];
+            const maxTrails = 50; // Maksimum iz sayısı
+
+            function createSmokeTrail(x, y) {
+                const trail = document.createElement('div');
+                trail.classList.add('smoke-trail');
+
+                const segmentCount = 5; // Zincir segment sayısı
+                for (let i = 0; i < segmentCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('smoke-particle');
+
+                    // Parçacık özellikleri
+                    const size = Math.random() * 20 + 10; // 10-30px
+                    const offsetX = Math.random() * 20 - 10; // -10 ila +10 px
+                    const offsetY = Math.random() * 20 - 10; // -10 ila +10 px
+                    const delay = i * 100; // Segment gecikmesi
+
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${x + offsetX - size / 2}px`;
+                    particle.style.top = `${y + offsetY - size / 2}px`;
+
+                    // Animasyon
+                    const animDuration = Math.random() * 800 + 600; // 600-1400ms
+                    particle.animate([
+                        { transform: 'scale(1)', opacity: 0.7 },
+                        { transform: `scale(${Math.random() * 3 + 2})`, opacity: 0 }
+                    ], {
+                        duration: animDuration,
+                        easing: 'ease-out',
+                        delay: delay // Zincirleme etki için gecikme
+                    });
+
+                    // Belirli bir süre sonra kaldır
+                    setTimeout(() => {
+                        particle.remove();
+                    }, animDuration + delay);
+
+                    trail.appendChild(particle);
+                }
+
+                document.body.appendChild(trail);
+                smokeTrails.push(trail);
+
+                setTimeout(() => {
+                    trail.remove();
+                    smokeTrails.shift();
+                }, 2000);
+            }
+
+            document.addEventListener('mousemove', (e) => {
+                createSmokeTrail(e.clientX, e.clientY);
+            });
+        });
+    </script>
+</body>
+</html>
